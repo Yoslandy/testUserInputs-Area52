@@ -27,6 +27,9 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "owner": "area52",
+    "description": "Mobile app for testing with Area52 to connect to Sitewise",
+    "githubUrl": "https://github.com/Yoslandy/testUserInputs-Area52.git"
   }
 }
