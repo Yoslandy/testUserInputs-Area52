@@ -4,6 +4,7 @@ import { Icon, Button, Switch, Slider } from 'react-native-elements';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import dayjs from 'dayjs';
+import axios from 'axios';
 
 const alias = {
   propertyAlias: [
@@ -55,7 +56,7 @@ const CardAddValues = () => {
         ValueType: ['integerValue', 'doubleValue', 'doubleValue', 'booleanValue', 'doubleValue'],
       };
 
-      fetch('https://4yltabuhf6.execute-api.us-east-1.amazonaws.com/v1/testinputs', {
+      fetch('https://29wmfdhs0g.execute-api.us-east-1.amazonaws.com/v1/userinputsrestapi', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -82,25 +83,22 @@ const CardAddValues = () => {
 
   const getData = () => {
     setLoadingForm(true);
+    console.log('entre');
     try {
-      fetch('https://4yltabuhf6.execute-api.us-east-1.amazonaws.com/v1/userInputExample2', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(alias),
-      })
-        .then((response) => response.json())
-        .then((values) => {
+      axios
+        .post('https://29wmfdhs0g.execute-api.us-east-1.amazonaws.com/v1/usergetvalues', alias)
+        .then((res) => {
           formik.setValues({
-            light: Object.values(values.body[0].value)[0],
-            crate_count: Object.values(values.body[1].value)[0],
-            temperature: Object.values(values.body[2].value)[0],
-            state: Object.values(values.body[3].value)[0],
-            weight: Object.values(values.body[4].value)[0],
+            light: Object.values(res.data.body[0].value)[0],
+            crate_count: Object.values(res.data.body[1].value)[0],
+            temperature: Object.values(res.data.body[2].value)[0],
+            state: Object.values(res.data.body[3].value)[0],
+            weight: Object.values(res.data.body[4].value)[0],
           });
           setLoadingForm(false);
+        })
+        .catch((error) => {
+          console.log('error');
         });
     } catch (error) {
       console.log(error);
@@ -113,7 +111,7 @@ const CardAddValues = () => {
       ...formik.values,
       light: value,
     });
-    console.log(formik.values);
+    /* console.log(formik.values); */
   }, [value]);
 
   const setStateCheched = (check) => {
@@ -122,7 +120,7 @@ const CardAddValues = () => {
       ...formik.values,
       state: check,
     });
-    console.log(formik.values);
+    /* console.log(formik.values); */
   };
 
   /* console.log(formik.values); */
