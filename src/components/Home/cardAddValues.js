@@ -1,19 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Alert, ActivityIndicator } from 'react-native';
 import { Icon, Button, Switch, Slider } from 'react-native-elements';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import dayjs from 'dayjs';
+
+const alias = {
+  propertyAlias: [
+    'UserInputs1/Light',
+    'UserInputs1/CrateCount',
+    'UserInputs1/Temperature',
+    'UserInputs1/State',
+    'UserInputs1/Weight',
+  ],
+};
 
 const CardAddValues = () => {
   const [checked, setChecked] = useState(false);
   const [value, setValue] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [loadingForm, setLoadingForm] = useState(false);
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   const initialValues = {
-    weight: 0,
+    light: 0,
     crate_count: 0,
     temperature: 0,
-    light: 0,
     state: false,
+    weight: 0,
   };
 
   const validationSchema = Yup.object({
@@ -23,16 +40,38 @@ const CardAddValues = () => {
   });
 
   const onSubmit = () => {
-    const newValues = {
-      weight: parseInt(formik.values.weight),
-      crate_count: parseInt(formik.values.crate_count),
-      temperature: parseInt(formik.values.temperature),
-      light: value,
-      state: checked,
-    };
+    try {
+      setLoading(true);
+      const event = {
+        AssetName: 'UserInputs1',
+        Timestamp: dayjs().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+        Values: {
+          CrateCount: parseInt(formik.values.crate_count),
+          Temperature: parseInt(formik.values.temperature),
+          Weight: parseInt(formik.values.weight),
+          State: formik.values.state,
+          Light: formik.values.light,
+        },
+        ValueType: ['integerValue', 'doubleValue', 'doubleValue', 'booleanValue', 'doubleValue'],
+      };
 
-    console.log(newValues);
-    Alert.alert('Values ready to send');
+      fetch('https://4yltabuhf6.execute-api.us-east-1.amazonaws.com/v1/testinputs', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(event),
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          console.log('Enviado');
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
   };
 
   const formik = useFormik({
@@ -41,101 +80,160 @@ const CardAddValues = () => {
     validationSchema,
   });
 
+  const getData = () => {
+    setLoadingForm(true);
+    try {
+      fetch('https://4yltabuhf6.execute-api.us-east-1.amazonaws.com/v1/userInputExample2', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(alias),
+      })
+        .then((response) => response.json())
+        .then((values) => {
+          formik.setValues({
+            light: Object.values(values.body[0].value)[0],
+            crate_count: Object.values(values.body[1].value)[0],
+            temperature: Object.values(values.body[2].value)[0],
+            state: Object.values(values.body[3].value)[0],
+            weight: Object.values(values.body[4].value)[0],
+          });
+          setLoadingForm(false);
+        });
+    } catch (error) {
+      console.log(error);
+      setLoadingForm(false);
+    }
+  };
+
+  useEffect(() => {
+    formik.setValues({
+      ...formik.values,
+      light: value,
+    });
+    console.log(formik.values);
+  }, [value]);
+
+  const setStateCheched = (check) => {
+    setChecked(value);
+    formik.setValues({
+      ...formik.values,
+      state: check,
+    });
+    console.log(formik.values);
+  };
+
+  /* console.log(formik.values); */
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.textHeader}>Add Values</Text>
-      <View style={styles.inputView}>
-        <Text style={styles.countText}>Weight</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter Value"
-          placeholderTextColor="rgba(0, 0, 0, 0.3)"
-          keyboardType="numeric"
-          value={formik.values.weight.toString()}
-          onChangeText={formik.handleChange('weight')}
-          onBlur={formik.handleBlur('weight')}
-        />
-        {formik.errors.weight && formik.touched.weight ? (
-          <Text style={{ color: 'red' }}>{formik.errors.weight}</Text>
-        ) : null}
-      </View>
-      <View style={styles.inputView}>
-        <Text style={styles.countText}>Crate Count</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter Value"
-          placeholderTextColor="rgba(0, 0, 0, 0.3)"
-          keyboardType="numeric"
-          value={formik.values.crate_count.toString()}
-          onChangeText={formik.handleChange('crate_count')}
-          onBlur={formik.handleBlur('crate_count')}
-        />
-        {formik.errors.crate_count && formik.touched.crate_count ? (
-          <Text style={{ color: 'red' }}>{formik.errors.crate_count}</Text>
-        ) : null}
-      </View>
-      <View style={styles.inputView}>
-        <Text style={styles.countText}>Temperature</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter Value"
-          placeholderTextColor="rgba(0, 0, 0, 0.3)"
-          keyboardType="numeric"
-          value={formik.values.temperature.toString()}
-          onChangeText={formik.handleChange('temperature')}
-          onBlur={formik.handleBlur('temperature')}
-        />
-        {formik.errors.temperature && formik.touched.temperature ? (
-          <Text style={{ color: 'red' }}>{formik.errors.temperature}</Text>
-        ) : null}
-      </View>
+    <>
+      {loadingForm ? (
+        <ActivityIndicator size="large" color={'black'} style={{ marginTop: '40%' }} />
+      ) : (
+        <View style={styles.container}>
+          <Text style={styles.textHeader}>Add Values</Text>
+          <View style={styles.inputView}>
+            <Text style={styles.countText}>Weight</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Value"
+              placeholderTextColor="rgba(0, 0, 0, 0.3)"
+              keyboardType="numeric"
+              value={formik.values.weight.toString()}
+              onChangeText={formik.handleChange('weight')}
+              onBlur={formik.handleBlur('weight')}
+            />
+            {formik.errors.weight && formik.touched.weight ? (
+              <Text style={{ color: 'red' }}>{formik.errors.weight}</Text>
+            ) : null}
+          </View>
+          <View style={styles.inputView}>
+            <Text style={styles.countText}>Crate Count</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Value"
+              placeholderTextColor="rgba(0, 0, 0, 0.3)"
+              keyboardType="numeric"
+              value={formik.values.crate_count.toString()}
+              onChangeText={formik.handleChange('crate_count')}
+              onBlur={formik.handleBlur('crate_count')}
+            />
+            {formik.errors.crate_count && formik.touched.crate_count ? (
+              <Text style={{ color: 'red' }}>{formik.errors.crate_count}</Text>
+            ) : null}
+          </View>
+          <View style={styles.inputView}>
+            <Text style={styles.countText}>Temperature</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Value"
+              placeholderTextColor="rgba(0, 0, 0, 0.3)"
+              keyboardType="numeric"
+              value={formik.values.temperature.toString()}
+              onChangeText={formik.handleChange('temperature')}
+              onBlur={formik.handleBlur('temperature')}
+            />
+            {formik.errors.temperature && formik.touched.temperature ? (
+              <Text style={{ color: 'red' }}>{formik.errors.temperature}</Text>
+            ) : null}
+          </View>
 
-      <View style={[styles.sliderView]}>
-        <Text style={[styles.countText, { marginLeft: -5 }]}>Light: {value}</Text>
-        <Slider
-          value={value}
-          onValueChange={setValue}
-          maximumValue={100}
-          minimumValue={0}
-          step={1}
-          allowTouchTrack
-          trackStyle={{ height: 5, backgroundColor: 'transparent' }}
-          thumbStyle={{ height: 20, width: 20, backgroundColor: 'transparent' }}
-          thumbProps={{
-            children: (
-              <Icon
-                name="arrow-left-right-bold"
-                type="material-community"
-                size={15}
-                reverse
-                containerStyle={{ bottom: 15, right: 15 }}
-                color="rgba(90, 154, 230, 1)"
-              />
-            ),
-          }}
-        />
-      </View>
+          <View style={[styles.sliderView]}>
+            <Text style={[styles.countText, { marginLeft: -5 }]}>Light: {formik.values.light}</Text>
+            <Slider
+              value={formik.values.light}
+              onValueChange={setValue}
+              maximumValue={100}
+              minimumValue={0}
+              step={1}
+              allowTouchTrack
+              trackStyle={{ height: 5, backgroundColor: 'transparent' }}
+              thumbStyle={{ height: 20, width: 20, backgroundColor: 'transparent' }}
+              thumbProps={{
+                children: (
+                  <Icon
+                    name="arrow-left-right-bold"
+                    type="material-community"
+                    size={15}
+                    reverse
+                    containerStyle={{ bottom: 15, right: 15 }}
+                    color="rgba(90, 154, 230, 1)"
+                  />
+                ),
+              }}
+            />
+          </View>
 
-      <View style={styles.lightView}>
-        <Text style={styles.lightText}>State</Text>
-        <Switch value={checked} onValueChange={(value) => setChecked(value)} />
-      </View>
+          <View style={styles.lightView}>
+            <Text style={styles.lightText}>State</Text>
+            <Switch value={formik.values.state} onValueChange={(value) => setStateCheched(value)} />
+          </View>
 
-      <Button
-        title="SEND"
-        icon={{
-          name: 'home',
-          type: 'material-community',
-          size: 20,
-          color: 'white',
-        }}
-        iconContainerStyle={{ marginRight: 10 }}
-        titleStyle={{ fontWeight: '700' }}
-        buttonStyle={styles.buttonStyle}
-        containerStyle={styles.containerStyle}
-        onPress={() => formik.handleSubmit()}
-      />
-    </View>
+          <Button
+            title={loading ? 'SENDING' : 'SEND'}
+            icon={
+              loading ? (
+                <ActivityIndicator size="small" color={'white'} style={{ marginRight: 10 }} />
+              ) : (
+                {
+                  name: loading ? 'other' : 'home',
+                  type: 'material-community',
+                  size: 20,
+                  color: 'white',
+                }
+              )
+            }
+            iconContainerStyle={{ marginRight: 10 }}
+            titleStyle={{ fontWeight: '700' }}
+            buttonStyle={styles.buttonStyle}
+            containerStyle={styles.containerStyle}
+            onPress={loading ? () => {} : () => formik.handleSubmit()}
+          />
+        </View>
+      )}
+    </>
   );
 };
 
