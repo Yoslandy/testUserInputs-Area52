@@ -1,22 +1,25 @@
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button, StyleSheet, ScrollView } from 'react-native';
 import React from 'react';
-import { Auth } from 'aws-amplify';
+import CardAddValues from '../../components/Home/cardAddValues';
 
 const Home = () => {
-  const signOut = async () => {
-    try {
-      await Auth.signOut({ global: true });
-    } catch (error) {
-      console.log('error signing out: ', error);
-    }
-  };
-
   return (
-    <View>
-      <Text>Home</Text>
-      <Button onPress={signOut} title="Sign Out" />
-    </View>
+    <ScrollView>
+      <View style={styles.container}>
+        <CardAddValues />
+      </View>
+    </ScrollView>
   );
 };
 
 export default Home;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    /* backgroundColor: '#fff', */
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 15,
+  },
+});
