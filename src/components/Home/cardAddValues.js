@@ -21,9 +21,11 @@ const CardAddValues = () => {
   const [value, setValue] = useState(0);
   const [loading, setLoading] = useState(false);
   const [loadingForm, setLoadingForm] = useState(false);
+  const [models, setModels] = useState([]);
 
   useEffect(() => {
     getData();
+    getModels();
   }, []);
 
   const initialValues = {
@@ -95,6 +97,25 @@ const CardAddValues = () => {
             state: Object.values(res.data.body[3].value)[0],
             weight: Object.values(res.data.body[4].value)[0],
           });
+          setLoadingForm(false);
+        })
+        .catch((error) => {
+          console.log('error');
+        });
+    } catch (error) {
+      console.log(error);
+      setLoadingForm(false);
+    }
+  };
+
+  const getModels = () => {
+    setLoadingForm(true);
+    console.log('models');
+    try {
+      axios
+        .get('https://29wmfdhs0g.execute-api.us-east-1.amazonaws.com/v1/testpythonpostmanrest')
+        .then((res) => {
+          console.log(res.data.data);
           setLoadingForm(false);
         })
         .catch((error) => {
