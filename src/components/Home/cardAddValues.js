@@ -25,7 +25,6 @@ const CardAddValues = () => {
 
   useEffect(() => {
     getData();
-    getModels();
   }, []);
 
   const initialValues = {
@@ -141,7 +140,6 @@ const CardAddValues = () => {
       ...formik.values,
       state: check,
     });
-    /* console.log(formik.values); */
   };
 
   /* console.log(formik.values); */

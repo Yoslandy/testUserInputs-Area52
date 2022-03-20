@@ -37,7 +37,7 @@ export default HeaderComponent;
 
 const styles = StyleSheet.create({
   viewStyle: {
-    marginTop: 5,
+    /* marginTop: 5, */
     justifyContent: 'center',
     alignItems: 'center',
   },
