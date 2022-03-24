@@ -1,20 +1,47 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import { Badge, /* Input, */ ListItem } from 'react-native-elements';
+import { URL_GET_ASSET } from '../../resources/urls/urls';
 
 const Assets = ({ navigation, route }) => {
-  const { assets, modelName } = route.params;
-  const [data, set_Data] = useState(assets);
+  const { model } = route.params;
+  const [data, set_Data] = useState(null);
+  const [loadingForm, setLoadingForm] = useState(false);
 
-  /* console.log(assets); */
+  useEffect(() => {
+    const body = {
+      assetModelId: model.id,
+    };
+    getAssets(body);
+  }, []);
+
+  const getAssets = (body) => {
+    setLoadingForm(true);
+    try {
+      axios
+        .post(URL_GET_ASSET, body)
+        .then((res) => {
+          /* console.log(res.data.data); */
+          set_Data(res.data.data);
+          setLoadingForm(false);
+        })
+        .catch((error) => {
+          console.log(error.message);
+          setLoadingForm(false);
+        });
+    } catch (error) {
+      console.log(error);
+      setLoadingForm(false);
+    }
+  };
 
   const renderItem = ({ item, index }) => (
     <TouchableOpacity
       onPress={() => {
         navigation.navigate('measurementsStackScreen', {
-          assetProperties: item.assetProperties,
-          assetName: item.name,
+          asset: item,
+          modelId: model.id,
         });
       }}
     >
@@ -26,40 +53,24 @@ const Assets = ({ navigation, route }) => {
         />
         <ListItem.Content>
           <ListItem.Title /* style={styles.textTitle} */>{item.name}</ListItem.Title>
-          {/* <ListItem.Subtitle style={styles.textSubTitle}>
-            {item.address.city}
-          </ListItem.Subtitle> */}
         </ListItem.Content>
-        {/* <Icon
-                    name='pencil-outline'
-                    size={height * 0.035}
-                    color={myColors.BLUE_SECUNDARY}
-                    onPress={() => { navigation.navigate('EditClientScreen', { clientId: item.uid }) }}
-                /> */}
-        {/* {deleting.flag && index === deleting.index ?
-                    <ActivityIndicator color={myColors.DANGER} />
-                    :
-                    <Icon
-                        name='trash-can-outline'
-                        size={height * 0.035}
-                        color={myColors.DANGER}
-                        onPress={() => deleteCl(item.uid, item.name, index)}
-                    />
-                } */}
+
         <ListItem.Chevron></ListItem.Chevron>
       </ListItem>
     </TouchableOpacity>
   );
 
   return (
-    <View>
-      <Text style={{ alignSelf: 'center', marginVertical: 10 }}>Model name: {modelName}</Text>
-      <FlatList
-        keyExtractor={(item, index) => index.toString() /* item.uid */}
-        data={data}
-        renderItem={renderItem}
-      />
-    </View>
+    <>
+      {loadingForm ? (
+        <ActivityIndicator size={'large'} />
+      ) : (
+        <>
+          <Text style={{ alignSelf: 'center', marginVertical: 10 }}>Model name: {model.name}</Text>
+          <FlatList keyExtractor={(item, index) => index.toString()} data={data} renderItem={renderItem} />
+        </>
+      )}
+    </>
   );
 };
 

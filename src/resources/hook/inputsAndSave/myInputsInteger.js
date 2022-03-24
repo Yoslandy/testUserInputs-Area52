@@ -6,35 +6,35 @@ import * as Yup from 'yup';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import dayjs from 'dayjs';
 import axios from 'axios';
+import { createEvent, getValueType } from '../methods/methods';
+import { ListItem } from 'react-native-elements';
+import { URL_SAVE_MEASUREMENTS } from '../../urls/urls';
 
 const { width, height } = Dimensions.get('window');
 
-export default InputsInteger = ({ assetName, item, ...rest }) => {
+export default InputsInteger = ({ asset, item, ...rest }) => {
   const [loading, setLoading] = useState(false);
+  const [textValue, setTextValue] = useState(Object.values(item.propertyValue.value)[0]);
 
   const initialValues = {
     value: 0,
   };
 
-  useEffect(() => {
-    getData();
-  }, []);
-
-  const getData = () => {
-    setLoading(true);
+  const getData = (assetId, propertyId) => {
+    const params = {
+      assetId: assetId,
+      propertyId: [propertyId],
+    };
     try {
       axios
-        .post('https://29wmfdhs0g.execute-api.us-east-1.amazonaws.com/v1/usergetvalues', {
-          propertyAlias: [item.alias],
-        })
+        .post('https://29wmfdhs0g.execute-api.us-east-1.amazonaws.com/v1/usergetvalues', params)
         .then((res) => {
-          formik.setValues({
-            value: Object.values(res.data.body[0].value)[0],
-          });
+          setTextValue(Object.values(res.data.body[0].value)[0]);
           setLoading(false);
         })
         .catch((error) => {
           console.log(error);
+          setLoading(false);
         });
     } catch (error) {
       console.log(error.message);
@@ -50,26 +50,19 @@ export default InputsInteger = ({ assetName, item, ...rest }) => {
         Alert.alert(`The ${item.name} value can't be 0 or Empty.`);
       } else {
         setLoading(true);
-        const measurementName = item.alias.replace(assetName + '/', '');
-        const event = {
-          AssetName: assetName,
-          Timestamp: dayjs().format('YYYY-MM-DDTHH:mm:ss[Z]'),
-          Values: {
-            [measurementName]: parseInt(formik.values.value),
-          },
-          ValueType: ['integerValue'],
-        };
-        fetch('https://29wmfdhs0g.execute-api.us-east-1.amazonaws.com/v1/userinputsrestapi', {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(event),
-        })
-          .then((response) => response.json())
-          .then((json) => {
-            /* console.log(json); */
+        const type = getValueType(item.dataType);
+        const value = parseFloat(formik.values.value);
+        const event = createEvent(asset.id, item.id, value, type);
+        axios
+          .post(URL_SAVE_MEASUREMENTS, event)
+          .then((res) => {
+            //console.log(res.data);
+            formik.handleReset();
+            getData(asset.id, item.id);
+            setLoading(false);
+          })
+          .catch((error) => {
+            console.log(error);
             setLoading(false);
           });
       }
@@ -86,6 +79,10 @@ export default InputsInteger = ({ assetName, item, ...rest }) => {
 
   return (
     <View style={styles.wrapper}>
+      <ListItem.Content>
+        <ListItem.Title>{item.name}</ListItem.Title>
+        <ListItem.Subtitle>{textValue + ' ' + (item.unit ? item.unit : '')}</ListItem.Subtitle>
+      </ListItem.Content>
       <TextInputMask
         type={'only-numbers'}
         placeholder={'000'}

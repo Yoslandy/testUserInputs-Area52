@@ -26,6 +26,15 @@ export const HomeBottomRouter = () => {
         },
       }}
     >
+      {/* <Tab_Admin.Screen
+        name="modelsBottomScreen1.1"
+        component={StackHome}
+        options={{
+          headerShown: false,
+          tabBarLabel: 'New Feature 1.1',
+          tabBarIcon: ({ color, size }) => <Icon name="archive-outline" color={color} size={size} />,
+        }}
+      /> */}
       <Tab_Admin.Screen
         name="modelsBottomScreen"
         component={StackHome}
