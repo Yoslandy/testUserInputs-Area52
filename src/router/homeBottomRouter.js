@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import React, { useEffect, useState } from 'react'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { Dimensions } from 'react-native'
 
-import { StackHome } from './modelsStackRouter';
-import Home from '../screens/Home/home';
-import { StackValues } from './valuesStackRouter';
+import { StackHome } from './modelsStackRouter'
+import { StackValues } from './valuesStackRouter'
 
-const Tab_Admin = createBottomTabNavigator();
+const Tab_Admin = createBottomTabNavigator()
+const { height } = Dimensions.get('screen')
 
 export const HomeBottomRouter = () => {
   return (
@@ -23,6 +24,7 @@ export const HomeBottomRouter = () => {
         tabBarInactiveTintColor: '#eee',
         tabBarStyle: {
           backgroundColor: '#bbb',
+          height: height * 0.08,
         },
       }}
     >
@@ -63,5 +65,5 @@ export const HomeBottomRouter = () => {
         }}
       />
     </Tab_Admin.Navigator>
-  );
-};
+  )
+}

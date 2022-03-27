@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import {
   View,
   Text,
@@ -7,77 +7,79 @@ import {
   ActivityIndicator,
   ScrollView,
   StyleSheet,
-} from 'react-native';
-import { Badge, /* Input, */ ListItem } from 'react-native-elements';
-import axios from 'axios';
+} from 'react-native'
+import { Badge, /* Input, */ ListItem } from 'react-native-elements'
+import axios from 'axios'
 /* import { SimpleAccordion } from 'react-native-simple-accordion'; */
-import Collapsible from 'react-native-collapsible';
+import Collapsible from 'react-native-collapsible'
 
-import Measurement from './measurementsComp/measurement';
-import Attribute from './measurementsComp/attributes';
-import Metrics from './measurementsComp/metrics';
+import Measurement from './measurementsComp/measurement'
+import Attribute from './measurementsComp/attributes'
+import Metrics from './measurementsComp/metrics'
 
-import { URL_GET_PROPERTIES } from '../../resources/urls/urls';
-import Transform from './measurementsComp/transform';
-import MyCollapsible from '../../resources/hook/myCollapsible';
+import { URL_GET_PROPERTIES } from '../../resources/urls/urls'
+import Transform from './measurementsComp/transform'
+import MyCollapsible from '../../resources/hook/myCollapsible'
+import { AssetContext } from '../../context/assetContext'
+import { useFocusEffect } from '@react-navigation/native'
+import MyScollView from '../../resources/hook/myKeyboard'
 
-const Measurements = ({ navigation, route }) => {
-  const { asset, modelId } = route.params;
-  const [data, set_Data] = useState([]);
-  const [measurements, set_Measurements] = useState([]);
-  const [attributes, set_Attributes] = useState([]);
-  const [metrics, set_Metrics] = useState([]);
-  const [transforms, set_Transforms] = useState([]);
-  const [loadingForm, setLoadingForm] = useState(false);
+const Modifiable = ({ navigation, route }) => {
+  /* const { asset, modelId } = route.params */
+  const { asset, modelId } = useContext(AssetContext)
+  //console.log(asset, modelId)
 
-  const body = { assetId: asset.id, modelId: modelId };
+  const [data, set_Data] = useState([])
+  const [measurements, set_Measurements] = useState([])
+  const [attributes, set_Attributes] = useState([])
+  const [loadingForm, setLoadingForm] = useState(false)
+
+  const body = { assetId: asset.id, modelId: modelId }
+
+  /* useEffect(() => {
+    getProperties(body)
+  }, []) */
+
+  useFocusEffect(
+    useCallback(() => {
+      getProperties(body)
+    }, [])
+  )
 
   useEffect(() => {
-    getProperties(body);
-  }, []);
-
-  useEffect(() => {
-    updateProperties();
-  }, [data]);
+    updateProperties()
+  }, [data])
 
   const updateProperties = () => {
-    let auxMeasurements = [];
-    let auxAttributes = [];
-    let auxMetrics = [];
-    let auxTransform = [];
+    let auxMeasurements = []
+    let auxAttributes = []
     for (let i = 0; i < data.length; i++) {
-      const element = data[i];
-      if (element.propertyType === 'measurement') auxMeasurements.push(element);
-      if (element.propertyType === 'attribute') auxAttributes.push(element);
-      if (element.propertyType === 'metric') auxMetrics.push(element);
-      if (element.propertyType === 'transform') auxTransform.push(element);
+      const element = data[i]
+      if (element.propertyType === 'measurement') auxMeasurements.push(element)
+      if (element.propertyType === 'attribute') auxAttributes.push(element)
     }
-    set_Measurements(auxMeasurements);
-    set_Attributes(auxAttributes);
-    set_Metrics(auxMetrics);
-    set_Transforms(auxTransform);
-    //console.log(attributes);
-  };
+    set_Measurements(auxMeasurements)
+    set_Attributes(auxAttributes)
+  }
 
   const getProperties = (body) => {
-    setLoadingForm(true);
+    setLoadingForm(true)
     try {
       axios
         .post(URL_GET_PROPERTIES, body)
         .then((res) => {
-          /* console.log(res.data.data); */
-          set_Data(res.data.data);
-          setLoadingForm(false);
+          set_Data(res.data.data)
+          setLoadingForm(false)
         })
         .catch((error) => {
-          console.log(error.message);
-          setLoadingForm(false);
-        });
+          console.log(error.message)
+          setLoadingForm(false)
+        })
     } catch (error) {
-      console.log(error);
-      setLoadingForm(false);
+      console.log(error)
+      setLoadingForm(false)
     }
-  };
+  }
 
   return (
     <>
@@ -86,9 +88,7 @@ const Measurements = ({ navigation, route }) => {
           <ActivityIndicator size={'large'} color={'#517fa4'} />
         </View>
       ) : (
-        //Cambiar el ScrollView o la FlatList Dentro de esos components por data.map
-        //https://stackoverflow.com/questions/67623952/error-virtualizedlists-should-never-be-nested-inside-plain-scrollviews-with-th
-        <ScrollView>
+        <MyScollView>
           <View>
             <Text style={{ alignSelf: 'center', marginVertical: 10 }}>Asset Name: {asset.name}</Text>
             <MyCollapsible text="Attributes">
@@ -100,20 +100,14 @@ const Measurements = ({ navigation, route }) => {
               </View>
               <Measurement data={measurements} asset={asset} body={body} />
             </View>
-            {/* <MyCollapsible text="Transforms">
-              <Transform data={transforms} asset={asset} />
-            </MyCollapsible>
-            <MyCollapsible text="Metrics">
-              <Metrics data={metrics} asset={asset} />
-            </MyCollapsible> */}
           </View>
-        </ScrollView>
+        </MyScollView>
       )}
     </>
-  );
-};
+  )
+}
 
-export default Measurements;
+export default Modifiable
 
 const styles = StyleSheet.create({
   header: {
@@ -129,4 +123,4 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
   }, */
-});
+})

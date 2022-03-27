@@ -1,48 +1,51 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
-import axios from 'axios';
-import { Badge, /* Input, */ ListItem } from 'react-native-elements';
-import { URL_GET_ASSET } from '../../resources/urls/urls';
+import React, { useContext, useEffect, useState } from 'react'
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native'
+import axios from 'axios'
+import { Badge, /* Input, */ ListItem } from 'react-native-elements'
+import { URL_GET_ASSET } from '../../resources/urls/urls'
+import { AssetContext } from '../../context/assetContext'
 
 const Assets = ({ navigation, route }) => {
-  const { model } = route.params;
-  const [data, set_Data] = useState(null);
-  const [loadingForm, setLoadingForm] = useState(false);
+  const { model } = route.params
+  const [data, set_Data] = useState(null)
+  const [loadingForm, setLoadingForm] = useState(false)
+  const { setAsset, setModelId } = useContext(AssetContext)
 
   useEffect(() => {
     const body = {
       assetModelId: model.id,
-    };
-    getAssets(body);
-  }, []);
+    }
+    getAssets(body)
+  }, [])
 
   const getAssets = (body) => {
-    setLoadingForm(true);
+    setLoadingForm(true)
     try {
       axios
         .post(URL_GET_ASSET, body)
         .then((res) => {
           /* console.log(res.data.data); */
-          set_Data(res.data.data);
-          setLoadingForm(false);
+          set_Data(res.data.data)
+          /* setAsset(res.data.data)
+          setModelId(model.id) */
+          setLoadingForm(false)
         })
         .catch((error) => {
-          console.log(error.message);
-          setLoadingForm(false);
-        });
+          console.log(error.message)
+          setLoadingForm(false)
+        })
     } catch (error) {
-      console.log(error);
-      setLoadingForm(false);
+      console.log(error)
+      setLoadingForm(false)
     }
-  };
+  }
 
   const renderItem = ({ item, index }) => (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate('measurementsStackScreen', {
-          asset: item,
-          modelId: model.id,
-        });
+        setAsset(item)
+        setModelId(model.id)
+        navigation.navigate('measurementsStackScreen')
       }}
     >
       <ListItem bottomDivider>
@@ -58,7 +61,7 @@ const Assets = ({ navigation, route }) => {
         <ListItem.Chevron></ListItem.Chevron>
       </ListItem>
     </TouchableOpacity>
-  );
+  )
 
   return (
     <>
@@ -73,7 +76,7 @@ const Assets = ({ navigation, route }) => {
         </>
       )}
     </>
-  );
-};
+  )
+}
 
-export default Assets;
+export default Assets

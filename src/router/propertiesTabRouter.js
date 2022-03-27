@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import Properties from '../components/Models/properties';
-import Properties_Metrics_Transf from '../components/Models/properties_Metrics_Transf';
+import React, { useEffect, useState } from 'react'
+import { View, Text } from 'react-native'
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
+import Properties from '../components/Models/properties'
+import Properties_Metrics_Transf from '../components/Models/properties_Metrics_Transf'
 
-const Tab = createMaterialTopTabNavigator();
+const Tab = createMaterialTopTabNavigator()
 
 const PropertiesTabRouter = () => {
   return (
     <Tab.Navigator
-      tabBarOptions={{
+      screenOptions={{
         //activeTintColor: myColors.WHITE,
         inactiveTintColor: '#eee',
         /* indicatorStyle: {
@@ -33,7 +33,7 @@ const PropertiesTabRouter = () => {
         name="Attr_Measur"
         component={Properties}
         options={{
-          tabBarLabel: 'Attributes/Measurements',
+          tabBarLabel: 'Modifiable',
           /* tabBarIcon: ({ color, size }) => (
             <Badge
               value={pending}
@@ -50,7 +50,7 @@ const PropertiesTabRouter = () => {
         name="Metrics_Transf"
         component={Properties_Metrics_Transf}
         options={{
-          tabBarLabel: 'Metrics/Transforms',
+          tabBarLabel: 'Unmodifiable',
           /* tabBarIcon: ({ color, size }) => (
             <Badge
               value={pending}
@@ -64,7 +64,7 @@ const PropertiesTabRouter = () => {
         }}
       />
     </Tab.Navigator>
-  );
-};
+  )
+}
 
-export default PropertiesTabRouter;
+export default PropertiesTabRouter

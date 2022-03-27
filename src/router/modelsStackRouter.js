@@ -52,7 +52,7 @@ export const StackHome = () => {
         />
         <StackClient.Screen
           name="measurementsStackScreen"
-          component={Properties}
+          component={PropertiesTabRouter}
           options={{
             headerTitle: 'PROPERTIES',
             headerStyle: styles.headerBackgroung,

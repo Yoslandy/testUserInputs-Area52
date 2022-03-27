@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { ListItem } from 'react-native-elements';
+import React, { useEffect, useState } from 'react'
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { ListItem } from 'react-native-elements'
 
-import MyInputsInteger from '../../../resources/hook/inputsAndSave/myInputsInteger';
-import MyInputsDoubles from '../../../resources/hook/inputsAndSave/myInputsDoubles';
-import MyInputsBoolean from '../../../resources/hook/inputsAndSave/myInputsBoolean';
-import { round } from '../../../resources/hook/methods/methods';
+import MyInputsInteger from '../../../resources/hook/inputsAndSave/myInputsInteger'
+import MyInputsDoubles from '../../../resources/hook/inputsAndSave/myInputsDoubles'
+import MyInputsBoolean from '../../../resources/hook/inputsAndSave/myInputsBoolean'
+import { round } from '../../../resources/hook/methods/methods'
 
-const Transform = ({ data, asset }) => {
-  const [mydata, setData] = useState([]);
+const Transform = ({ data, asset, loadingForm }) => {
+  const [mydata, setData] = useState([])
 
   useEffect(() => {
-    setData(data);
-  }, []);
+    setData(data)
+  }, [])
 
   const renderItem = (item, index) => (
     <ListItem bottomDivider key={index}>
@@ -22,9 +22,9 @@ const Transform = ({ data, asset }) => {
       </ListItem.Content>
       <Text>{round(Object.values(item.propertyValue.value)[0], 1)}</Text>
     </ListItem>
-  );
+  )
 
-  return <>{mydata.map((item, index) => renderItem(item, index))}</>;
-};
+  return <>{mydata.map((item, index) => renderItem(item, index))}</>
+}
 
-export default Transform;
+export default Transform
