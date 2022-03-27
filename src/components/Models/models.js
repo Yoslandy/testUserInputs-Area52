@@ -54,7 +54,9 @@ const Models = ({ navigation }) => {
   return (
     <>
       {loadingForm ? (
-        <ActivityIndicator size={'large'} />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size={'large'} color={'#517fa4'} />
+        </View>
       ) : (
         <View style={{ marginTop: 10 }}>
           <FlatList keyExtractor={(item, index) => index.toString()} data={data} renderItem={renderItem} />

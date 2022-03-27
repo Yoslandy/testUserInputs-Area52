@@ -1,8 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import Collapsible from 'react-native-collapsible';
-import { URL_GET_PROPERTIES } from '../urls/urls';
-import axios from 'axios';
+import { Icon } from 'react-native-elements';
 
 const MyCollapsible = ({ children, text, body }) => {
   const [collapsed, setCollapsed] = useState(true);
@@ -15,7 +14,15 @@ const MyCollapsible = ({ children, text, body }) => {
         }}
       >
         <View style={styles.header}>
+          <Text style={styles.headerText}> </Text>
           <Text style={styles.headerText}>{text}</Text>
+          <Icon
+            name={!collapsed ? 'chevron-up-outline' : 'chevron-down-outline'}
+            type="ionicon"
+            color="#517fa4"
+            size={20}
+            style={styles.iconStyle}
+          />
         </View>
       </TouchableOpacity>
       <Collapsible collapsed={collapsed} align="center">
@@ -29,16 +36,19 @@ export default MyCollapsible;
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: '#F5FCFF',
-    padding: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#ccc',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
   },
   headerText: {
     textAlign: 'center',
     fontSize: 16,
     fontWeight: '500',
   },
-  content: {
-    padding: 20,
-    backgroundColor: '#fff',
+  iconStyle: {
+    alignSelf: 'flex-end',
   },
 });

@@ -80,9 +80,11 @@ const Measurements = ({ navigation, route }) => {
   };
 
   return (
-    <View>
+    <>
       {loadingForm ? (
-        <ActivityIndicator size={'large'} />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size={'large'} color={'#517fa4'} />
+        </View>
       ) : (
         //Cambiar el ScrollView o la FlatList Dentro de esos components por data.map
         //https://stackoverflow.com/questions/67623952/error-virtualizedlists-should-never-be-nested-inside-plain-scrollviews-with-th
@@ -107,7 +109,7 @@ const Measurements = ({ navigation, route }) => {
           </View>
         </ScrollView>
       )}
-    </View>
+    </>
   );
 };
 
@@ -115,7 +117,7 @@ export default Measurements;
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#ccc',
     padding: 10,
   },
   headerText: {
@@ -123,8 +125,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
-  content: {
+  /* content: {
     padding: 20,
     backgroundColor: '#fff',
-  },
+  }, */
 });

@@ -60,7 +60,7 @@ export default InputsBoolean = ({ asset, item, ...rest }) => {
           formik.handleReset();
           getData(asset.id, item.id);
           setLoading(false);
-          Alert.alert('Attribute saved successfully!!!');
+          toast({ message: 'Attribute saved successfully!!!' });
         })
         .catch((error) => {
           console.log(error);

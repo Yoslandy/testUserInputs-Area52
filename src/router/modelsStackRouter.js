@@ -9,6 +9,7 @@ import HeaderComponent from '../components/Header/header';
 import Models from '../components/Models/models';
 import Assets from '../components/Models/assets';
 import Properties from '../components/Models/properties';
+import PropertiesTabRouter from './propertiesTabRouter';
 
 const StackClient = createStackNavigator();
 

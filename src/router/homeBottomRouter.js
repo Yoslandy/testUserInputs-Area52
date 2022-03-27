@@ -40,7 +40,7 @@ export const HomeBottomRouter = () => {
         component={StackHome}
         options={{
           headerShown: false,
-          tabBarLabel: 'New Feature',
+          tabBarLabel: 'Models',
           tabBarIcon: ({ color, size }) => <Icon name="archive-outline" color={color} size={size} />,
         }}
       />
@@ -49,7 +49,7 @@ export const HomeBottomRouter = () => {
         component={StackValues}
         options={{
           headerShown: false,
-          tabBarLabel: 'Old Feature',
+          tabBarLabel: 'Others',
           tabBarIcon: ({ color, size }) => (
             <Icon name="text-box-multiple-outline" color={color} size={size} />
           ),

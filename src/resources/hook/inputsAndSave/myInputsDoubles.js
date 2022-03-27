@@ -2,17 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions, ActivityIndicator, Alert } from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import dayjs from 'dayjs';
 import axios from 'axios';
 import { createEvent, getValueType } from '../methods/methods';
 import { ListItem } from 'react-native-elements';
 import { URL_SAVE_MEASUREMENTS } from '../../urls/urls';
+import { useToast } from 'react-native-styled-toast';
 
 const { width, height } = Dimensions.get('window');
 
 export default InputsDoubles = ({ asset, item, ...rest }) => {
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [textValue, setTextValue] = useState(Object.values(item.propertyValue.value)[0]);
 
@@ -45,7 +45,7 @@ export default InputsDoubles = ({ asset, item, ...rest }) => {
   const onSubmit = () => {
     try {
       if (formik.values.value === 0) {
-        Alert.alert('Confirmation', 'Are you sure you want to save the values equal to zero? ', [
+        Alert.alert('Confirmation', 'Are you sure you want to save the value equal to zero? ', [
           {
             text: 'No',
             onPress: () => console.log('No Pressed'),
@@ -65,7 +65,7 @@ export default InputsDoubles = ({ asset, item, ...rest }) => {
                   formik.handleReset();
                   getData(asset.id, item.id);
                   setLoading(false);
-                  Alert.alert('Attribute saved successfully!!!');
+                  toast({ message: 'Attribute saved successfully!!!' });
                 })
                 .catch((error) => {
                   console.log(error);
@@ -86,7 +86,7 @@ export default InputsDoubles = ({ asset, item, ...rest }) => {
             formik.handleReset();
             getData(asset.id, item.id);
             setLoading(false);
-            Alert.alert('Attribute saved successfully!!!');
+            toast({ message: 'Attribute saved successfully!!!' });
           })
           .catch((error) => {
             console.log(error);

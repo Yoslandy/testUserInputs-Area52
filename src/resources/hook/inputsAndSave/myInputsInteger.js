@@ -50,7 +50,7 @@ export default InputsInteger = ({ asset, item, ...rest }) => {
       } else if (formik.values.value === '') {
         Alert.alert(`The ${item.name} value can't be Empty.`);
       } else if (formik.values.value === 0) {
-        Alert.alert('Confirmation', 'Are you sure you want to save the values equal to zero? ', [
+        Alert.alert('Confirmation', 'Are you sure you want to save the value equal to zero? ', [
           {
             text: 'No',
             onPress: () => console.log('No Pressed'),
@@ -70,7 +70,7 @@ export default InputsInteger = ({ asset, item, ...rest }) => {
                   formik.handleReset();
                   getData(asset.id, item.id);
                   setLoading(false);
-                  Alert.alert('Attribute saved successfully!!!');
+                  toast({ message: 'Attribute saved successfully!!!' });
                 })
                 .catch((error) => {
                   console.log(error);
@@ -91,7 +91,7 @@ export default InputsInteger = ({ asset, item, ...rest }) => {
             formik.handleReset();
             getData(asset.id, item.id);
             setLoading(false);
-            Alert.alert('Attribute saved successfully!!!');
+            toast({ message: 'Attribute saved successfully!!!' });
           })
           .catch((error) => {
             console.log(error);

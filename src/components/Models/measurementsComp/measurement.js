@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import dayjs from 'dayjs';
 import axios from 'axios';
+import { useToast } from 'react-native-styled-toast';
 
 import NormalInputDouble from '../../../resources/hook/inputs/normalInputDouble';
 import NormalInputInteger from '../../../resources/hook/inputs/normalInputInteger';
@@ -12,12 +13,12 @@ import NormalInputBoolean from '../../../resources/hook/inputs/normalInputBoolea
 import { URL_GET_PROPERTIES, URL_SAVE_MEASUREMENTS } from '../../../resources/urls/urls';
 
 const Measurement = ({ data, asset, body }) => {
+  const { toast } = useToast();
   const [mydata, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [initialValues, setInitialValues] = useState({});
   const [propertyIds, setPropertyIds] = useState([]);
   const [propertyTypes, setPropertyTypes] = useState([]);
-  const [value, setValue] = useState(false);
 
   useEffect(() => {
     setData(data);
@@ -92,7 +93,7 @@ const Measurement = ({ data, asset, body }) => {
                 .then((res) => {
                   setLoading(false);
                   updateLabels();
-                  Alert.alert('Measurements saved successfully!!!');
+                  toast({ message: 'Measurements saved successfully!!!' });
                 })
                 .catch((error) => {
                   console.log(error.message);
@@ -109,7 +110,7 @@ const Measurement = ({ data, asset, body }) => {
             //console.log(res.data);
             setLoading(false);
             updateLabels();
-            Alert.alert('Measurements saved successfully!!!');
+            toast({ message: 'Measurements saved successfully!!!' });
           })
           .catch((error) => {
             console.log(error.message);

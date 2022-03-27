@@ -8,7 +8,10 @@ const Home = () => {
     <>
       {/* <HeaderComponent /> */}
       <ScrollView>
-        <View style={styles.container}>{<CardAddValues />}</View>
+        <View style={styles.container}>
+          <Text>Other Components</Text>
+        </View>
+        {/* {<CardAddValues />} */}
       </ScrollView>
     </>
   );

@@ -63,7 +63,9 @@ const Assets = ({ navigation, route }) => {
   return (
     <>
       {loadingForm ? (
-        <ActivityIndicator size={'large'} />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size={'large'} color={'#517fa4'} />
+        </View>
       ) : (
         <>
           <Text style={{ alignSelf: 'center', marginVertical: 10 }}>Model name: {model.name}</Text>
