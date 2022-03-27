@@ -43,11 +43,42 @@ export default InputsInteger = ({ asset, item, ...rest }) => {
   };
 
   const onSubmit = () => {
+    console.log(formik.values.value);
     try {
       if (formik.values.value > 100) {
         Alert.alert(`The ${item.name} value can't be more than 100.`);
-      } else if (formik.values.value < 1 || formik.values.value === '') {
-        Alert.alert(`The ${item.name} value can't be 0 or Empty.`);
+      } else if (formik.values.value === '') {
+        Alert.alert(`The ${item.name} value can't be Empty.`);
+      } else if (formik.values.value === 0) {
+        Alert.alert('Confirmation', 'Are you sure you want to save the values equal to zero? ', [
+          {
+            text: 'No',
+            onPress: () => console.log('No Pressed'),
+            style: 'cancel',
+          },
+          {
+            text: 'Yes',
+            onPress: () => {
+              setLoading(true);
+              const type = getValueType(item.dataType);
+              const value = parseFloat(formik.values.value);
+              const event = createEvent(asset.id, item.id, value, type);
+              axios
+                .post(URL_SAVE_MEASUREMENTS, event)
+                .then((res) => {
+                  //console.log(res.data);
+                  formik.handleReset();
+                  getData(asset.id, item.id);
+                  setLoading(false);
+                  Alert.alert('Attribute saved successfully!!!');
+                })
+                .catch((error) => {
+                  console.log(error);
+                  setLoading(false);
+                });
+            },
+          },
+        ]);
       } else {
         setLoading(true);
         const type = getValueType(item.dataType);
@@ -60,6 +91,7 @@ export default InputsInteger = ({ asset, item, ...rest }) => {
             formik.handleReset();
             getData(asset.id, item.id);
             setLoading(false);
+            Alert.alert('Attribute saved successfully!!!');
           })
           .catch((error) => {
             console.log(error);
@@ -85,7 +117,7 @@ export default InputsInteger = ({ asset, item, ...rest }) => {
       </ListItem.Content>
       <TextInputMask
         type={'only-numbers'}
-        placeholder={'000'}
+        placeholder={'0'}
         value={formik.values.value}
         onChangeText={formik.handleChange('value')}
         maxLength={3}

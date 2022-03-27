@@ -56,6 +56,7 @@ const Measurements = ({ navigation, route }) => {
     set_Attributes(auxAttributes);
     set_Metrics(auxMetrics);
     set_Transforms(auxTransform);
+    //console.log(attributes);
   };
 
   const getProperties = (body) => {
@@ -88,9 +89,8 @@ const Measurements = ({ navigation, route }) => {
         <ScrollView>
           <View>
             <Text style={{ alignSelf: 'center', marginVertical: 10 }}>Asset Name: {asset.name}</Text>
-
-            <MyCollapsible text="Attributes" body={body}>
-              <Attribute data={attributes} asset={asset} />
+            <MyCollapsible text="Attributes">
+              <Attribute data={attributes} body={body} asset={asset} />
             </MyCollapsible>
             <View style={{ marginTop: 10 }}>
               <View style={styles.header}>
@@ -98,8 +98,6 @@ const Measurements = ({ navigation, route }) => {
               </View>
               <Measurement data={measurements} asset={asset} body={body} />
             </View>
-            {/* <MyCollapsible text="Measurements">
-            </MyCollapsible> */}
             {/* <MyCollapsible text="Transforms">
               <Transform data={transforms} asset={asset} />
             </MyCollapsible>

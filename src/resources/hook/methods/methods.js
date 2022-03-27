@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { Alert } from 'react-native';
 
 export const createEvent = (assetId, propertyId, value, type) => {
   const event = {

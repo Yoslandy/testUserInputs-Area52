@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Dimensions, TextInput, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Dimensions, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
 import { useFormik } from 'formik';
 import axios from 'axios';
@@ -57,10 +57,10 @@ export default InputsBoolean = ({ asset, item, ...rest }) => {
       axios
         .post(URL_SAVE_MEASUREMENTS, event)
         .then((res) => {
-          //console.log(res.data);
           formik.handleReset();
           getData(asset.id, item.id);
           setLoading(false);
+          Alert.alert('Attribute saved successfully!!!');
         })
         .catch((error) => {
           console.log(error);

@@ -5,6 +5,7 @@ import { ListItem } from 'react-native-elements';
 import MyInputsInteger from '../../../resources/hook/inputsAndSave/myInputsInteger';
 import MyInputsDoubles from '../../../resources/hook/inputsAndSave/myInputsDoubles';
 import MyInputsBoolean from '../../../resources/hook/inputsAndSave/myInputsBoolean';
+import MyCollapsible from '../../../resources/hook/myCollapsible';
 
 const Attribute = ({ data, asset }) => {
   const [mydata, setData] = useState([]);
@@ -13,8 +14,8 @@ const Attribute = ({ data, asset }) => {
     setData(data);
   }, []);
 
-  const renderItem = ({ item, index }) => (
-    <ListItem bottomDivider>
+  const renderItem = (item, index) => (
+    <ListItem bottomDivider key={index}>
       {item.dataType === 'INTEGER' ? (
         <MyInputsInteger item={item} asset={asset} />
       ) : item.dataType === 'DOUBLE' ? (
@@ -27,7 +28,7 @@ const Attribute = ({ data, asset }) => {
     </ListItem>
   );
 
-  return <FlatList keyExtractor={(item, index) => index.toString()} data={mydata} renderItem={renderItem} />;
+  return <>{mydata.map((item, index) => renderItem(item, index))}</>;
 };
 
 export default Attribute;

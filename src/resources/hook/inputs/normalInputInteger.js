@@ -18,9 +18,8 @@ export default NormalInputInteger = ({ value, ...rest }) => {
     <View style={styles.wrapper}>
       <TextInputMask
         type={'only-numbers'}
-        placeholder={'000'}
+        placeholder={'0'}
         value={value}
-        //onChangeText={formik.handleChange('value')}
         maxLength={3}
         textAlign="right"
         style={[styles.inputContainerProfile, styles.inputProfile]}
@@ -41,6 +40,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 6,
     marginRight: 8,
+    //backgroundColor: 'blue',
   },
   inputProfile: {
     paddingHorizontal: 5,

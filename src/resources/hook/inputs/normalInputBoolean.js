@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 6,
     marginRight: 8,
+    //backgroundColor: 'green',
   },
   inputProfile: {
     paddingHorizontal: 5,

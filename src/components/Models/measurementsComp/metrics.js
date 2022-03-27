@@ -14,8 +14,8 @@ const Metrics = ({ data, asset }) => {
     setData(data);
   }, []);
 
-  const renderItem = ({ item, index }) => (
-    <ListItem bottomDivider>
+  const renderItem = (item, index) => (
+    <ListItem bottomDivider key={index}>
       <ListItem.Content>
         <ListItem.Title>{item.name}</ListItem.Title>
         {/* <ListItem.Subtitle>{textValue + ' ' + (item.unit ? item.unit : '')}</ListItem.Subtitle> */}
@@ -24,7 +24,7 @@ const Metrics = ({ data, asset }) => {
     </ListItem>
   );
 
-  return <FlatList keyExtractor={(item, index) => index.toString()} data={mydata} renderItem={renderItem} />;
+  return <>{mydata.map((item, index) => renderItem(item, index))}</>;
 };
 
 export default Metrics;

@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import dayjs from 'dayjs';
-import axios from 'axios';
-import { createEvent, getValueType } from '../methods/methods';
-import { ListItem } from 'react-native-elements';
 
 const { width, height } = Dimensions.get('window');
 
@@ -26,7 +19,6 @@ export default NormalInputDouble = ({ /* asset, item, */ value, ...rest }) => {
           suffixUnit: '',
         }}
         value={value}
-        //onChangeText={formik.handleChange('value')}
         maxLength={5}
         textAlign="right"
         style={[styles.inputContainerProfile, styles.inputProfile]}
@@ -47,6 +39,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 6,
     marginRight: 8,
+    //backgroundColor: 'yellow',
   },
   inputProfile: {
     paddingHorizontal: 5,

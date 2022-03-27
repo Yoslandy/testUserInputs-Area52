@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Dimensions, ActivityIndicator, Alert } from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -44,23 +44,55 @@ export default InputsDoubles = ({ asset, item, ...rest }) => {
 
   const onSubmit = () => {
     try {
-      setLoading(true);
-      const type = getValueType(item.dataType);
-      const value = parseFloat(formik.values.value);
-      const event = createEvent(asset.id, item.id, value, type);
-      //console.log(event);
-      axios
-        .post(URL_SAVE_MEASUREMENTS, event)
-        .then((res) => {
-          //console.log(res.data);
-          formik.handleReset();
-          getData(asset.id, item.id);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.log(error);
-          setLoading(false);
-        });
+      if (formik.values.value === 0) {
+        Alert.alert('Confirmation', 'Are you sure you want to save the values equal to zero? ', [
+          {
+            text: 'No',
+            onPress: () => console.log('No Pressed'),
+            style: 'cancel',
+          },
+          {
+            text: 'Yes',
+            onPress: () => {
+              setLoading(true);
+              const type = getValueType(item.dataType);
+              const value = parseFloat(formik.values.value);
+              const event = createEvent(asset.id, item.id, value, type);
+              //console.log(event);
+              axios
+                .post(URL_SAVE_MEASUREMENTS, event)
+                .then((res) => {
+                  formik.handleReset();
+                  getData(asset.id, item.id);
+                  setLoading(false);
+                  Alert.alert('Attribute saved successfully!!!');
+                })
+                .catch((error) => {
+                  console.log(error);
+                  setLoading(false);
+                });
+            },
+          },
+        ]);
+      } else {
+        setLoading(true);
+        const type = getValueType(item.dataType);
+        const value = parseFloat(formik.values.value);
+        const event = createEvent(asset.id, item.id, value, type);
+        //console.log(event);
+        axios
+          .post(URL_SAVE_MEASUREMENTS, event)
+          .then((res) => {
+            formik.handleReset();
+            getData(asset.id, item.id);
+            setLoading(false);
+            Alert.alert('Attribute saved successfully!!!');
+          })
+          .catch((error) => {
+            console.log(error);
+            setLoading(false);
+          });
+      }
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -76,7 +108,7 @@ export default InputsDoubles = ({ asset, item, ...rest }) => {
     <View style={styles.wrapper}>
       <ListItem.Content>
         <ListItem.Title>{item.name}</ListItem.Title>
-        <ListItem.Subtitle>{textValue + ' ' + (item.unit ? item.unit : '')}</ListItem.Subtitle>
+        <ListItem.Subtitle>{textValue.toFixed(1) + ' ' + (item.unit ? item.unit : '')}</ListItem.Subtitle>
       </ListItem.Content>
       <TextInputMask
         type={'money'}
