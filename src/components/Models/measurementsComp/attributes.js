@@ -1,18 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { ListItem } from 'react-native-elements';
+import React, { useContext, useEffect, useState } from 'react'
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { ListItem } from 'react-native-elements'
 
-import MyInputsInteger from '../../../resources/hook/inputsAndSave/myInputsInteger';
-import MyInputsDoubles from '../../../resources/hook/inputsAndSave/myInputsDoubles';
-import MyInputsBoolean from '../../../resources/hook/inputsAndSave/myInputsBoolean';
-import MyCollapsible from '../../../resources/hook/myCollapsible';
+import MyInputsInteger from '../../../resources/hook/inputsAndSave/myInputsInteger'
+import MyInputsDoubles from '../../../resources/hook/inputsAndSave/myInputsDoubles'
+import MyInputsBoolean from '../../../resources/hook/inputsAndSave/myInputsBoolean'
+import { AssetContext } from '../../../context/assetContext'
 
-const Attribute = ({ data, asset }) => {
-  const [mydata, setData] = useState([]);
-
-  useEffect(() => {
-    setData(data);
-  }, []);
+const Attribute = () => {
+  const { asset, attributes } = useContext(AssetContext)
 
   const renderItem = (item, index) => (
     <ListItem bottomDivider key={index}>
@@ -26,9 +22,9 @@ const Attribute = ({ data, asset }) => {
         <Text>NON</Text>
       )}
     </ListItem>
-  );
+  )
 
-  return <>{mydata.map((item, index) => renderItem(item, index))}</>;
-};
+  return <>{attributes.map((item, index) => renderItem(item, index))}</>
+}
 
-export default Attribute;
+export default Attribute

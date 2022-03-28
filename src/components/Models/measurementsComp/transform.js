@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { ListItem } from 'react-native-elements'
 
@@ -6,13 +6,10 @@ import MyInputsInteger from '../../../resources/hook/inputsAndSave/myInputsInteg
 import MyInputsDoubles from '../../../resources/hook/inputsAndSave/myInputsDoubles'
 import MyInputsBoolean from '../../../resources/hook/inputsAndSave/myInputsBoolean'
 import { round } from '../../../resources/hook/methods/methods'
+import { AssetContext } from '../../../context/assetContext'
 
-const Transform = ({ data, asset, loadingForm }) => {
-  const [mydata, setData] = useState([])
-
-  useEffect(() => {
-    setData(data)
-  }, [])
+const Transform = ({}) => {
+  const { transforms, loading } = useContext(AssetContext)
 
   const renderItem = (item, index) => (
     <ListItem bottomDivider key={index}>
@@ -20,11 +17,15 @@ const Transform = ({ data, asset, loadingForm }) => {
         <ListItem.Title>{item.name}</ListItem.Title>
         {/* <ListItem.Subtitle>{textValue + ' ' + (item.unit ? item.unit : '')}</ListItem.Subtitle> */}
       </ListItem.Content>
-      <Text>{round(Object.values(item.propertyValue.value)[0], 1)}</Text>
+      {loading ? (
+        <ActivityIndicator size="small" color={'black'} />
+      ) : (
+        <Text>{round(Object.values(item.propertyValue.value)[0], 1)}</Text>
+      )}
     </ListItem>
   )
 
-  return <>{mydata.map((item, index) => renderItem(item, index))}</>
+  return <>{transforms.map((item, index) => renderItem(item, index))}</>
 }
 
 export default Transform

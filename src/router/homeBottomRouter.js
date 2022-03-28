@@ -43,7 +43,7 @@ export const HomeBottomRouter = () => {
         options={{
           headerShown: false,
           tabBarLabel: 'Models',
-          tabBarIcon: ({ color, size }) => <Icon name="archive-outline" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => <Icon name="state-machine" color={color} size={size} />,
         }}
       />
       <Tab_Admin.Screen

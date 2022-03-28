@@ -1,82 +1,62 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, StyleSheet, Alert } from 'react-native';
-import { Badge, Icon, Button, ListItem, Switch } from 'react-native-elements';
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
-import dayjs from 'dayjs';
-import axios from 'axios';
-import { useToast } from 'react-native-styled-toast';
+import React, { useContext, useEffect, useState } from 'react'
+import { View, Text, ActivityIndicator, StyleSheet, Alert } from 'react-native'
+import { Button } from 'react-native-elements'
+import * as Yup from 'yup'
+import { useFormik } from 'formik'
+import dayjs from 'dayjs'
+import axios from 'axios'
+import { useToast } from 'react-native-styled-toast'
 
-import NormalInputDouble from '../../../resources/hook/inputs/normalInputDouble';
-import NormalInputInteger from '../../../resources/hook/inputs/normalInputInteger';
-import NormalInputBoolean from '../../../resources/hook/inputs/normalInputBoolean';
-import { URL_GET_PROPERTIES, URL_SAVE_MEASUREMENTS } from '../../../resources/urls/urls';
+import NormalInputDouble from '../../../resources/hook/inputs/normalInputDouble'
+import NormalInputInteger from '../../../resources/hook/inputs/normalInputInteger'
+import NormalInputBoolean from '../../../resources/hook/inputs/normalInputBoolean'
+import { URL_SAVE_MEASUREMENTS } from '../../../resources/urls/urls'
+import { AssetContext } from '../../../context/assetContext'
 
-const Measurement = ({ data, asset, body }) => {
-  const { toast } = useToast();
-  const [mydata, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [initialValues, setInitialValues] = useState({});
-  const [propertyIds, setPropertyIds] = useState([]);
-  const [propertyTypes, setPropertyTypes] = useState([]);
+const Measurement = ({}) => {
+  const { asset, modelId, getProperties, measurements } = useContext(AssetContext)
+  const body = { assetId: asset.id, modelId: modelId }
+  const { toast } = useToast()
+  const [loading, setLoading] = useState(false)
+  const [initialValues, setInitialValues] = useState({})
+  const [propertyIds, setPropertyIds] = useState([])
+  const [propertyTypes, setPropertyTypes] = useState([])
 
   useEffect(() => {
-    setData(data);
-    defineinitialValues();
-  }, []);
+    defineinitialValues()
+  }, [])
 
-  const validationSchema = Yup.object({});
-
-  const updateLabels = () => {
-    try {
-      axios
-        .post(URL_GET_PROPERTIES, body)
-        .then((res) => {
-          const data = res.data.data;
-          let auxMeasurements = [];
-          for (let i = 0; i < data.length; i++) {
-            const element = data[i];
-            if (element.propertyType === 'measurement') auxMeasurements.push(element);
-          }
-          setData(auxMeasurements);
-        })
-        .catch((error) => {
-          console.log(error.message);
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const validationSchema = Yup.object({})
 
   const checkValueCero = () => {
-    let flag = false;
-    const formikValues = Object.values(formik.values);
+    let flag = false
+    const formikValues = Object.values(formik.values)
     for (let i = 0; i < formikValues.length; i++) {
-      const value_i = formikValues[i];
+      const value_i = formikValues[i]
       if (value_i === 0) {
-        return (flag = true);
+        return (flag = true)
       }
     }
-    return flag;
-  };
+    return flag
+  }
 
   const checkValueEmpty = () => {
-    let flag = false;
-    const formikValues = Object.values(formik.values);
+    let flag = false
+    const formikValues = Object.values(formik.values)
     for (let i = 0; i < formikValues.length; i++) {
-      const value_i = formikValues[i];
+      const value_i = formikValues[i]
       if (Number.isNaN(value_i)) {
-        return (flag = true);
+        return (flag = true)
       }
     }
-    return flag;
-  };
+    return flag
+  }
 
   const onSubmit = () => {
-    const event = defineEventOut();
+    const event = defineEventOut()
     try {
       if (checkValueEmpty()) {
-        Alert.alert('Changes cannot be saved because there are empty fields');
+        Alert.alert('Changes cannot be saved because there are empty fields')
       } else if (checkValueCero()) {
         Alert.alert('Confirmation', 'Are you sure you want to save with values equal to zero? ', [
           {
@@ -87,99 +67,101 @@ const Measurement = ({ data, asset, body }) => {
           {
             text: 'Yes',
             onPress: () => {
-              setLoading(true);
+              setLoading(true)
               axios
                 .post(URL_SAVE_MEASUREMENTS, event)
                 .then((res) => {
-                  setLoading(false);
-                  updateLabels();
-                  toast({ message: 'Measurements saved successfully!!!' });
+                  //updateLabels();
+                  getProperties(body)
+                  setLoading(false)
+                  toast({ message: 'Measurements saved successfully!!!' })
                 })
                 .catch((error) => {
-                  console.log(error.message);
-                  setLoading(false);
-                });
+                  console.log(error.message)
+                  setLoading(false)
+                })
             },
           },
-        ]);
+        ])
       } else {
-        setLoading(true);
+        setLoading(true)
         axios
           .post(URL_SAVE_MEASUREMENTS, event)
           .then((res) => {
             //console.log(res.data);
-            setLoading(false);
-            updateLabels();
-            toast({ message: 'Measurements saved successfully!!!' });
+            setLoading(false)
+            //updateLabels();
+            getProperties(body)
+            toast({ message: 'Measurements saved successfully!!!' })
           })
           .catch((error) => {
-            console.log(error.message);
-            setLoading(false);
-          });
+            console.log(error.message)
+            setLoading(false)
+          })
       }
     } catch (error) {
-      console.log(error.message);
-      setLoading(false);
+      console.log(error.message)
+      setLoading(false)
     }
-  };
+  }
 
   const formik = useFormik({
     initialValues,
     onSubmit,
     validationSchema,
-  });
+  })
 
   const defineinitialValues = () => {
-    const idsArray = [];
-    const typesArray = [];
-    for (let i = 0; i < data.length; i++) {
-      const element = data[i];
-      let elementType = Object.keys(element.propertyValue.value)[0];
-      let elementValue = Object.values(element.propertyValue.value)[0];
+    const idsArray = []
+    const typesArray = []
+    for (let i = 0; i < measurements.length; i++) {
+      const element = measurements[i]
+      let elementType = Object.keys(element.propertyValue.value)[0]
+      let elementValue = Object.values(element.propertyValue.value)[0]
       initialValues[element.id] =
         elementType === 'doubleValue' || elementType === 'integerValue'
           ? parseFloat(elementValue)
-          : elementValue;
-      idsArray.push(element.id);
-      typesArray.push(elementType);
+          : elementValue
+      idsArray.push(element.id)
+      typesArray.push(elementType)
     }
-    setPropertyIds(idsArray);
-    setPropertyTypes(typesArray);
-  };
+    setPropertyIds(idsArray)
+    setPropertyTypes(typesArray)
+  }
 
   const defineEventOut = () => {
-    let event = {};
+    let event = {}
     event = {
       assetId: asset.id,
       propertyId: propertyIds,
       Timestamp: dayjs().format('YYYY-MM-DDTHH:mm:ss[Z]'),
       Values: formik.values,
       ValueType: propertyTypes,
-    };
-    return event;
-  };
+    }
+    return event
+  }
 
   const handleChange = (value, id, type) => {
-    const formikKeys = Object.keys(formik.values);
-    const formikValues = Object.values(formik.values);
-    let newFormik = {};
-    let newValue = 0;
+    const formikKeys = Object.keys(formik.values)
+    const formikValues = Object.values(formik.values)
+    let newFormik = {}
+    let newValue = 0
 
     if (type === 'INTEGER' || type === 'DOUBLE') {
-      newValue = parseFloat(value);
-    } else newValue = value;
+      newValue = parseFloat(value)
+    } else newValue = value
     for (let i = 0; i < formikKeys.length; i++) {
-      const key_i = formikKeys[i];
-      const value_i = formikValues[i];
+      const key_i = formikKeys[i]
+      const value_i = formikValues[i]
 
       if (key_i === id) {
-        newFormik[key_i] = newValue;
+        newFormik[key_i] = newValue
       } else {
-        newFormik[key_i] = value_i;
+        newFormik[key_i] = value_i
       }
     }
-    formik.setValues(newFormik);
-  };
+    formik.setValues(newFormik)
+  }
 
   const renderItem = (item, index) => (
     <View key={index} style={styles.containerListItem}>
@@ -198,7 +180,7 @@ const Measurement = ({ data, asset, body }) => {
             name={Object.keys(formik.values)[index]}
             value={Object.values(formik.values)[index]}
             onChangeText={(value) => {
-              handleChange(value, item.id, 'INTEGER');
+              handleChange(value, item.id, 'INTEGER')
             }}
           />
         ) : item.dataType === 'DOUBLE' ? (
@@ -207,7 +189,7 @@ const Measurement = ({ data, asset, body }) => {
             name={Object.keys(formik.values)[index]}
             value={Object.values(formik.values)[index]}
             onChangeText={(value) => {
-              handleChange(value, item.id, 'DOUBLE');
+              handleChange(value, item.id, 'DOUBLE')
             }}
           />
         ) : item.dataType === 'BOOLEAN' ? (
@@ -216,7 +198,7 @@ const Measurement = ({ data, asset, body }) => {
             name={Object.keys(formik.values)[index]}
             value={Object.values(formik.values)[index]}
             onValueChange={(value) => {
-              handleChange(value, item.id, 'BOOLEAN');
+              handleChange(value, item.id, 'BOOLEAN')
             }}
           />
         ) : (
@@ -224,11 +206,11 @@ const Measurement = ({ data, asset, body }) => {
         )}
       </View>
     </View>
-  );
+  )
 
   return (
     <>
-      {mydata.map((item, index) => renderItem(item, index))}
+      {measurements.map((item, index) => renderItem(item, index))}
       <Button
         title={loading ? 'SENDING' : 'SEND'}
         icon={
@@ -250,10 +232,10 @@ const Measurement = ({ data, asset, body }) => {
         onPress={loading ? () => {} : () => formik.handleSubmit()}
       />
     </>
-  );
-};
+  )
+}
 
-export default Measurement;
+export default Measurement
 
 const styles = StyleSheet.create({
   buttonStyle: {
@@ -285,4 +267,4 @@ const styles = StyleSheet.create({
     color: '#aaa',
     //fontWeight: '600',
   },
-});
+})
