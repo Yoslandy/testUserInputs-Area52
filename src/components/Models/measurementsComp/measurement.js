@@ -1,9 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { View, Text, ActivityIndicator, StyleSheet, Alert } from 'react-native'
+import { View, Text, ActivityIndicator, StyleSheet, Alert, Platform, TouchableOpacity } from 'react-native'
 import { Button } from 'react-native-elements'
 import * as Yup from 'yup'
 import { useFormik } from 'formik'
+import DateTimePicker from '@react-native-community/datetimepicker'
 import dayjs from 'dayjs'
+import isBetween from 'dayjs/plugin/isBetween'
+dayjs.extend(isBetween)
 import axios from 'axios'
 import { useToast } from 'react-native-styled-toast'
 
@@ -21,6 +24,12 @@ const Measurement = ({}) => {
   const [initialValues, setInitialValues] = useState({})
   const [propertyIds, setPropertyIds] = useState([])
   const [propertyTypes, setPropertyTypes] = useState([])
+  const [date, setDate] = useState(new Date())
+  const [time, setTime] = useState(new Date())
+  const [showDate, setShowDate] = useState(false)
+  const [showTime, setShowTime] = useState(false)
+
+  const [fechaMostrar, setFechaMostrar] = useState(null)
 
   useEffect(() => {
     defineinitialValues()
@@ -53,6 +62,13 @@ const Measurement = ({}) => {
   }
 
   const onSubmit = () => {
+    //console.log(dayjs(new Date()).unix())
+
+    let today = dayjs(new Date())
+    let momentDate = dayjs(today).subtract(7, 'day')
+    /* if (!dayjs(date).isBetween(momentDate, today)) {
+      Alert.alert('Error!!!. The Timestamp has to be between the last 7 days from now.')
+    } else { */
     const event = defineEventOut()
     try {
       if (checkValueEmpty()) {
@@ -71,9 +87,8 @@ const Measurement = ({}) => {
               axios
                 .post(URL_SAVE_MEASUREMENTS, event)
                 .then((res) => {
-                  //updateLabels();
-                  getProperties(body)
                   setLoading(false)
+                  getProperties(body)
                   toast({ message: 'Measurements saved successfully!!!' })
                 })
                 .catch((error) => {
@@ -88,9 +103,7 @@ const Measurement = ({}) => {
         axios
           .post(URL_SAVE_MEASUREMENTS, event)
           .then((res) => {
-            //console.log(res.data);
             setLoading(false)
-            //updateLabels();
             getProperties(body)
             toast({ message: 'Measurements saved successfully!!!' })
           })
@@ -103,6 +116,7 @@ const Measurement = ({}) => {
       console.log(error.message)
       setLoading(false)
     }
+    /* } */
   }
 
   const formik = useFormik({
@@ -134,7 +148,7 @@ const Measurement = ({}) => {
     event = {
       assetId: asset.id,
       propertyId: propertyIds,
-      Timestamp: dayjs().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+      Timestamp: dayjs(date).format('YYYY-MM-DDTHH:mm:ss[Z]'), //,dayjs(date).valueOf(),
       Values: formik.values,
       ValueType: propertyTypes,
     }
@@ -208,9 +222,100 @@ const Measurement = ({}) => {
     </View>
   )
 
+  const onChangeDate = (event, selectedDate) => {
+    setShowDate(false)
+    setDate(selectedDate)
+  }
+  const onChangeTime = (event, selectedTime) => {
+    setShowTime(false)
+    setTime(selectedTime)
+    date.setHours(selectedTime.getHours())
+    date.setMinutes(selectedTime.getMinutes())
+  }
+
+  const showDatePicker = () => {
+    setShowDate(true)
+  }
+  const showTimePicker = () => {
+    setShowTime(true)
+  }
+
+  useEffect(() => {
+    setFechaMostrar(dayjs(date).format('YYYY-MM-DDTHH:mm:ss[Z]'))
+  }, [time, date])
+
   return (
     <>
       {measurements.map((item, index) => renderItem(item, index))}
+
+      <View style={styles.containerListItem}>
+        <View>
+          <Text style={styles.textTitle}>Timestamp</Text>
+          <Text style={styles.textSubTitle}>{fechaMostrar && fechaMostrar}</Text>
+          <Text style={styles.textSubTitle}>Optional</Text>
+        </View>
+        <View>
+          {Platform.OS === 'ios' ? (
+            <View style={{ marginRight: 5 }}>
+              <DateTimePicker
+                testID="date"
+                value={date}
+                mode="date"
+                is24Hour={true}
+                display="default"
+                onChange={onChangeDate}
+                locale="en-EN"
+                style={{ width: 140 }}
+              />
+              <DateTimePicker
+                testID="time"
+                value={time}
+                mode="time"
+                is24Hour={true}
+                display="default"
+                onChange={onChangeTime}
+                locale="en-EN"
+                style={{ width: 140, marginTop: 5 }}
+              />
+            </View>
+          ) : (
+            <>
+              <TouchableOpacity style={styles.button} onPress={showDatePicker}>
+                <Text style={styles.textButton}>{dayjs(date).format('MMM DD YYYY')}</Text>
+              </TouchableOpacity>
+              {showDate && (
+                <DateTimePicker
+                  testID="date"
+                  value={date}
+                  mode="date"
+                  is24Hour={true}
+                  display="default"
+                  onChange={onChangeDate}
+                  locale="en-EN"
+                />
+              )}
+              <TouchableOpacity
+                style={[styles.button, { marginTop: 5, width: 80, alignSelf: 'flex-end' }]}
+                onPress={showTimePicker}
+              >
+                <Text style={styles.textButton}>{dayjs(date).format('HH:mm')}</Text>
+              </TouchableOpacity>
+              {showTime && (
+                <DateTimePicker
+                  testID="time"
+                  value={time}
+                  mode="time"
+                  is24Hour={true}
+                  display="default"
+                  onChange={onChangeTime}
+                  locale="en-EN"
+                />
+              )}
+            </>
+          )}
+        </View>
+      </View>
+
       <Button
         title={loading ? 'SENDING' : 'SEND'}
         icon={
@@ -266,5 +371,16 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#aaa',
     //fontWeight: '600',
+  },
+  button: {
+    backgroundColor: '#bbb',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+  textButton: {
+    fontSize: 16,
+    color: 'black',
   },
 })

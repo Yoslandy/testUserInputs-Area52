@@ -51,10 +51,8 @@ export const HomeBottomRouter = () => {
         component={StackValues}
         options={{
           headerShown: false,
-          tabBarLabel: 'Others',
-          tabBarIcon: ({ color, size }) => (
-            <Icon name="text-box-multiple-outline" color={color} size={size} />
-          ),
+          tabBarLabel: 'Charps',
+          tabBarIcon: ({ color, size }) => <Icon name="chart-areaspline" color={color} size={size} />,
           /* tabBarBadge: ordersAdmin && Object.keys(ordersAdmin).length,
           tabBarBadgeStyle: {
             backgroundColor: myColors.WARNING_BADGE,
