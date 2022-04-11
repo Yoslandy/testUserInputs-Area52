@@ -5,6 +5,8 @@ import { Dimensions } from 'react-native'
 
 import { StackHome } from './modelsStackRouter'
 import { StackValues } from './valuesStackRouter'
+import { StackChart } from './chartStackRouter'
+import { StackChartHome3 } from './chartStackHome3Router'
 
 const Tab_Admin = createBottomTabNavigator()
 const { height } = Dimensions.get('screen')
@@ -51,8 +53,40 @@ export const HomeBottomRouter = () => {
         component={StackValues}
         options={{
           headerShown: false,
-          tabBarLabel: 'Charps',
+          tabBarLabel: 'Chart-Kit',
           tabBarIcon: ({ color, size }) => <Icon name="chart-areaspline" color={color} size={size} />,
+          /* tabBarBadge: ordersAdmin && Object.keys(ordersAdmin).length,
+          tabBarBadgeStyle: {
+            backgroundColor: myColors.WARNING_BADGE,
+            color: myColors.WHITE,
+            borderWidth: 0.5,
+            borderColor: myColors.WHITE,
+          }, */
+        }}
+      />
+      <Tab_Admin.Screen
+        name="home2BottomScreen"
+        component={StackChart}
+        options={{
+          headerShown: false,
+          tabBarLabel: 'Victory',
+          tabBarIcon: ({ color, size }) => <Icon name="chart-bar" color={color} size={size} />,
+          /* tabBarBadge: ordersAdmin && Object.keys(ordersAdmin).length,
+          tabBarBadgeStyle: {
+            backgroundColor: myColors.WARNING_BADGE,
+            color: myColors.WHITE,
+            borderWidth: 0.5,
+            borderColor: myColors.WHITE,
+          }, */
+        }}
+      />
+      <Tab_Admin.Screen
+        name="home3BottomScreen"
+        component={StackChartHome3}
+        options={{
+          headerShown: false,
+          tabBarLabel: 'Grafana',
+          tabBarIcon: ({ color, size }) => <Icon name="chart-histogram" color={color} size={size} />,
           /* tabBarBadge: ordersAdmin && Object.keys(ordersAdmin).length,
           tabBarBadgeStyle: {
             backgroundColor: myColors.WARNING_BADGE,

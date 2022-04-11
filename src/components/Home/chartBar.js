@@ -1,10 +1,17 @@
-import { View, Text, Dimensions } from 'react-native'
-import React from 'react'
+import { View, Text, Dimensions, ActivityIndicator } from 'react-native'
+import React, { useContext, useEffect } from 'react'
 import { BarChart } from 'react-native-chart-kit'
+import { ChartContext } from '../../context/chartContext'
 
 const screenWidth = Dimensions.get('window').width
 
 const ChartBar = () => {
+  const { labelsData, chartData, getValues } = useContext(ChartContext)
+
+  useEffect(() => {
+    getValues()
+  }, [])
+
   const chartConfig = {
     backgroundColor: '#e26a00',
     backgroundGradientFrom: '#fb8c00',
@@ -21,31 +28,37 @@ const ChartBar = () => {
   }
 
   const data = {
-    labels: ['January', '', '', '', '', 'June'],
+    labels: labelsData,
     datasets: [
       {
-        data: [20, 45, 28, 80, 99, 43, 80, 99, 43, 99, 43, 80, 99, 43],
+        data: chartData,
       },
     ],
   }
 
   return (
     <View>
-      <BarChart
-        paddingRight={15}
-        style={{
-          marginVertical: 8,
-          borderRadius: 16,
-          /* paddingRight: 5, */
-        }}
-        data={data}
-        width={screenWidth}
-        height={220}
-        /* yAxisLabel="$" */
-        chartConfig={chartConfig}
-        showValuesOnTopOfBars={true}
-        /* verticalLabelRotation={30} */
-      />
+      {Object.keys(chartData).length === 0 ? (
+        <ActivityIndicator size="small" color={'#e26a00'} style={{ marginRight: 10 }} />
+      ) : (
+        <BarChart
+          paddingRight={15}
+          style={{
+            marginVertical: 8,
+            borderRadius: 16,
+            /* paddingRight: 5, */
+          }}
+          verticalLabelRotation={90}
+          data={data}
+          width={screenWidth}
+          height={280}
+          xLabelsOffset={-15}
+          /* yAxisLabel="$" */
+          chartConfig={chartConfig}
+          showValuesOnTopOfBars={true}
+          /* verticalLabelRotation={30} */
+        />
+      )}
     </View>
   )
 }

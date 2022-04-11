@@ -9,6 +9,8 @@ import { ThemeProvider } from 'styled-components'
 import { ToastProvider } from 'react-native-styled-toast'
 import theme from './src/resources/theme'
 import { AssetProvider } from './src/context/assetContext'
+import { ChartProvider } from './src/context/chartContext'
+import MainContextProvider from './src/context/mainContextProvider'
 
 Amplify.configure(awsconfig)
 
@@ -17,9 +19,9 @@ function App() {
     <NavigationContainer>
       <ThemeProvider theme={theme}>
         <ToastProvider>
-          <AssetProvider>
+          <MainContextProvider>
             <HomeBottomRouter />
-          </AssetProvider>
+          </MainContextProvider>
         </ToastProvider>
       </ThemeProvider>
     </NavigationContainer>

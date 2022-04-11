@@ -5,10 +5,11 @@ import { Auth } from 'aws-amplify'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import Home from '../screens/Home/home'
+import Home2 from '../screens/Home/home2'
 
 const StackClient = createStackNavigator()
 
-export const StackValues = () => {
+export const StackChart = () => {
   const signOut = async () => {
     try {
       await Auth.signOut({ global: true })
@@ -21,8 +22,8 @@ export const StackValues = () => {
     <>
       <StackClient.Navigator>
         <StackClient.Screen
-          name="ValuesStackScreen"
-          component={Home}
+          name="chartsStackScreen"
+          component={Home2}
           options={{
             headerTitle: 'CHARTS',
             headerStyle: styles.headerBackgroung,
