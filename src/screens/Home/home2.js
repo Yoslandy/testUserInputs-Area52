@@ -4,12 +4,13 @@ import ChartLine from '../../components/Home/chartLine'
 import ChartBar from '../../components/Home/chartBar'
 import { ChartContext, ChartProvider } from '../../context/chartContext'
 import { Button } from 'react-native-elements'
+import ChartVictoryBar from '../../components/Home2/chartVictoryBar'
+import ChartVictoryLine from '../../components/Home2/chartVictoryLine'
+import ChartVictoryScatter from '../../components/Home3/chartVictoryScatter'
 
-const Home = () => {
+const Home2 = () => {
   const { loading, getValues } = useContext(ChartContext)
-
   return (
-    /* <ChartProvider> */
     <ScrollView>
       <View style={styles.container}>
         {/* <Text>Bringing the last 10 records of net_lobster_weight</Text> */}
@@ -36,15 +37,15 @@ const Home = () => {
             onPress={loading ? () => {} : () => getValues()}
           />
         </View> */}
-        <ChartLine />
-        <ChartBar />
+        {/* <ChartVictoryScatter /> */}
+        <ChartVictoryBar />
+        <ChartVictoryLine />
       </View>
     </ScrollView>
-    /* </ChartProvider> */
   )
 }
 
-export default Home
+export default Home2
 
 const styles = StyleSheet.create({
   container: {
